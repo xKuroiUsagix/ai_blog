@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,11 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRETS_FILENAME = 'secrets.json'
 
-
 with open(BASE_DIR.joinpath(SECRETS_FILENAME)) as f:
     key = json.load(f).get('secret_key')
 
-SECRET_KEY = 'django-insecure-2^z=9-lp4j6f(=%a06m+55s=0qq2_y3z@@2k&h3-k0t%qi1m(q'
+SECRET_KEY = key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,6 +32,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'ninja_extra',
+    
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -116,3 +120,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'user.User'
+
+NINJA_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
