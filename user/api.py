@@ -4,18 +4,18 @@ from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
 
 from .models import User
-from .schemas import UserIn, UserOut
+from .schemas import UserInputSchema, UserOutputSchema
 from .constants import NEGATIVE_AUTO_POST_REPLY_ERROR
 
 
 @api_controller('/user')
 class UserController:
-    @route.get('/', auth=JWTAuth(), response={200: UserOut})
+    @route.get('/', auth=JWTAuth(), response={200: UserOutputSchema})
     def retrieve_user(self, request):
         return request.user
 
-    @route.post('/create', response={201: UserOut})
-    def create_user(self, request, data: UserIn):
+    @route.post('/create', response={201: UserOutputSchema})
+    def create_user(self, request, data: UserInputSchema):
         if data.get('auto_post_reply') < 0:
             raise HttpError(400, NEGATIVE_AUTO_POST_REPLY_ERROR)
 
@@ -24,7 +24,7 @@ class UserController:
         user.save()
         return user
 
-    @route.patch('/update-auto-reply', auth=JWTAuth())
+    @route.patch('/update-auto-reply', auth=JWTAuth(), response={200: UserOutputSchema})
     def update_auto_reply(self, request, auto_post_reply: int):
         if auto_post_reply < 0:
             raise HttpError(400, NEGATIVE_AUTO_POST_REPLY_ERROR)
