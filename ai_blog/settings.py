@@ -1,6 +1,8 @@
-import json
+import os
 from pathlib import Path
 from datetime import timedelta
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,12 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRETS_FILENAME = 'secrets.json'
 
-with open(BASE_DIR.joinpath(SECRETS_FILENAME)) as f:
-    secrets = json.load(f)
+load_dotenv()
 
-SECRET_KEY = secrets.get('secret_key')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -144,7 +144,7 @@ CELERY_TASK_DEFAULT_QUEUE = 'default'
 
 # Gemini
 
-GEMINI_API_KEY = secrets.get('gemini_api_key')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 GEMINI_MODEL_NAME = 'gemini-1.5-flash'
 
 
