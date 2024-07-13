@@ -13,9 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRETS_FILENAME = 'secrets.json'
 
 with open(BASE_DIR.joinpath(SECRETS_FILENAME)) as f:
-    key = json.load(f).get('secret_key')
+    secrets = json.load(f)
 
-SECRET_KEY = key
+SECRET_KEY = secrets.get('secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -141,6 +141,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Kyiv'
 
 CELERY_TASK_DEFAULT_QUEUE = 'default'
+
+# Gemini
+
+GEMINI_API_KEY = secrets.get('gemini_api_key')
+GEMINI_MODEL_NAME = 'gemini-1.5-flash'
 
 
 TIME_ZONE = 'Europe/Kyiv'
