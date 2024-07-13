@@ -7,7 +7,7 @@ from .constants import MAX_COMMENT_LENGTH
 
 def get_ai_response(content):
     limit = int(MAX_COMMENT_LENGTH / 2)
-    return ai_model.generate_content(f'Reply to this comment using less than {limit} symbols: {content}')
+    return ai_model.generate_content(f'Reply to this comment using less than {limit} symbols: {content}').text
 
 def ai_verify_safety(content):
     response = ai_model.generate_content(
