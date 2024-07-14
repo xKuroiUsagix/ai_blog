@@ -1,6 +1,6 @@
 from typing import Optional
 
-from datetime import datetime
+from datetime import datetime, date
 from ninja import Schema, Field
 
 from user.schemas import UserOutputSchema
@@ -30,3 +30,9 @@ class CommentOutputSchema(Schema):
     post_id: int = Field(None, alias='id')
     user: UserOutputSchema
     created_at: datetime
+
+class CommentDailyBrekadownSchema(Schema):
+    day: date
+    total_comments: int
+    blocked_comments: int
+    published_comments: int
