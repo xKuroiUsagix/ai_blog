@@ -28,3 +28,8 @@ _Create a simple API for managing posts and comments with AI moderation and auto
 10. In first terminal type: `python manage.py runserver` - to start server locally. Default port is: `8000`. You should already be able to acces http://127.0.0.1:8000/api/docs
 11. In second terminal type: `celery -A ai_blog worker -Q default -n dynamic_pt_node -l info -E`. This will start celery worker on redis.
 12. In third terminal type: `celery -A ai_blog beat -l info`. This will start celery scheduler.
+
+## Known Issues
+### Gemini
+Gemini has a free plan, but it is not accesible in many countries, particularly in Europe. You can check your country here: https://ai.google.dev/gemini-api/docs/available-regions#unpaid-tier-unavailable.
+If you don't have access to free plan, you can use VPN to change your location to one of supported countries - recieve a key and then you need to test the project with VPN turned on.
