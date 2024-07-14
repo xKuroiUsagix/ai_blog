@@ -25,6 +25,7 @@ class Comment(models.Model):
     user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     generated_by_ai = models.BooleanField(default=False, db_index=True)
     is_response = models.BooleanField(default=False, db_index=True)
+    is_blocked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     respond_at = models.DateTimeField(null=True, blank=True)
     task = models.OneToOneField(PeriodicTask, on_delete=models.SET_NULL, null=True, blank=True)
@@ -52,7 +53,8 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if (self.user.auto_post_reply is None) or (self.task) or (self.is_response) or (self.generated_by_ai):
+        if (not self.user.auto_post_reply or self.task or self.is_response or 
+                self.generated_by_ai or self.is_blocked):
             return
 
         self.respond_at = self.created_at + timedelta(minutes=self.user.auto_post_reply)

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from datetime import datetime
 from ninja import Schema, Field
 
@@ -15,9 +17,12 @@ class PostOutputSchema(Schema):
     user: UserOutputSchema
     created_at: datetime
 
+class PostUpdateSchema(Schema):
+    title: Optional[str]
+    content: Optional[str]
+
 class CommentInputSchema(Schema):
     content: str
-    post_id: int
 
 class CommentOutputSchema(Schema):
     id: int
@@ -25,8 +30,3 @@ class CommentOutputSchema(Schema):
     post_id: int = Field(None, alias='id')
     user: UserOutputSchema
     created_at: datetime
-
-class CommentResponseSchema(Schema):
-    reply_to: int
-    content: str
-    post_id: int
