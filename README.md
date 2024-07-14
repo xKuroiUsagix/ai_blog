@@ -33,3 +33,6 @@ _Create a simple API for managing posts and comments with AI moderation and auto
 ### Gemini
 Gemini has a free plan, but it is not accesible in many countries, particularly in Europe. You can check your country here: https://ai.google.dev/gemini-api/docs/available-regions#unpaid-tier-unavailable.
 If you don't have access to free plan, you can use VPN to change your location to one of supported countries - recieve a key and then you need to test the project with VPN turned on.
+
+### Redis on Windows
+Redis could be a bit annoying to use on Windows that's why Linux is prefered. You will need WSL (windows subsystem linux). When using WSL don't forget that you need to type `celery` commands inside of project root folder.
