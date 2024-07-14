@@ -1,10 +1,12 @@
 from typing import List
+from datetime import date
 
 from ninja_extra import api_controller, route, permissions
 from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, QuerySet
+from django.db.models.functions import TruncDay
 from rest_framework.status import (
     HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT,
     HTTP_403_FORBIDDEN
@@ -17,6 +19,7 @@ from .schemas import (
     PostUpdateSchema,
     CommentOutputSchema, 
     CommentInputSchema,
+    CommentDailyBrekadownSchema,
 )
 from .helpers import ai_verify_safety
 from .constants import (
@@ -72,7 +75,6 @@ class BlogController:
             post.content = data.content
 
         post.save()
-
         return post
 
     @route.delete('/post/{post_id}/delete')
@@ -131,3 +133,49 @@ class BlogController:
             content = data.content,
             **kwargs
         )
+
+
+@api_controller('/blog/analytics', auth=JWTAuth(), permissions=[permissions.IsAuthenticated])
+class BlogAnalyticsController:
+    @route.get('/comments-daily-breakdown', response={HTTP_200_OK: List[CommentDailyBrekadownSchema]})
+    def comments_daily_breakdown(self, request, date_from: date, date_to: date):
+        query = Comment.objects.all()
+        return self._aggregate_comments_daily(query, date_from, date_to)
+
+    @route.get('/comments-daily-breakdown/exclude-responses', response={HTTP_200_OK: List[CommentDailyBrekadownSchema]})
+    def comments_daily_breakdown_excluding_responses(self, request, date_from: date, date_to: date):
+        responses = CommentResponse.objects.values_list('response__id', flat=True)
+        query = Comment.objects.all().exclude(id__in=responses)
+        return self._aggregate_comments_daily(query, date_from, date_to)
+
+    @route.get('/comments-daily-breakdown/exclude-ai', response={HTTP_200_OK: List[CommentDailyBrekadownSchema]})
+    def comments_daily_breakdown_excluding_ai(self, request, date_from: date, date_to: date):
+        query = Comment.objects.all().exclude(generated_by_ai=True)
+        return self._aggregate_comments_daily(query, date_from, date_to)
+
+    @route.get('/comments-daily-breakdown/ai-only', response={HTTP_200_OK: List[CommentDailyBrekadownSchema]})
+    def comments_daily_breakdown_ai_only(self, request, date_from: date, date_to: date):
+        query = Comment.objects.filter(generated_by_ai=True)
+        return self._aggregate_comments_daily(query, date_from, date_to)
+
+    def _aggregate_comments_daily(self, query: QuerySet, date_from: date, date_to: date):
+        aggregated_comments = query.filter(
+            created_at__range=(date_from, date_to)
+        ).annotate(
+            day=TruncDay('created_at')
+        ).values('day').annotate(
+            total_comments = Count('id'),
+            blocked_count = Count(Case(When(is_blocked=True, then=1))),
+            published_comments = Count(Case(When(is_blocked=False, then=1)))
+        ).order_by('day')
+
+        daily_breakdown = []
+        for entry in aggregated_comments:
+            daily_breakdown .append({
+                'day': entry['day'],
+                'total_comments': entry['total_comments'],
+                'blocked_comments': entry['blocked_count'],
+                'published_comments': entry['published_comments']
+            })
+
+        return daily_breakdown
