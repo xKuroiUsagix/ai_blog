@@ -14,6 +14,9 @@ class Post(models.Model):
     user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
@@ -55,6 +58,9 @@ class Comment(models.Model):
         self.respond_at = self.created_at + timedelta(minutes=self.user.auto_post_reply)
         self.task = self._create_task()
         self.save()
+    
+    def __str__(self):
+        return self.content[:15] + '...'
 
 
 class CommentResponse(models.Model):
