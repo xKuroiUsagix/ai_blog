@@ -1,7 +1,7 @@
 import  json
 
 from django.test import TestCase, Client
-from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
 
 from .models import User
 
@@ -9,22 +9,20 @@ from .models import User
 class UserTestCase(TestCase):
     def setUp(self) -> None:
         self.client = Client()
+        self.path = '/api/user/create'
+        self.username = 'test_username'
+        self.password = 'test_pass'
+        self.data = json.dumps({
+            'username': self.username,
+            'password': self.password
+        })
 
     def test_create_user(self):
-        path = '/api/user/create'
-        username = 'test_username'
-        password = 'test_pass'
-        auto_post_reply = None
-        request_data = {
-            'username': username,
-            'password': password,
-            'auto_post_reply': auto_post_reply
-        }
-        response = self.client.post(path, json.dumps(request_data), content_type='application/json')
+        response = self.client.post(self.path, self.data, content_type='application/json')
         
-        assert response.status_code == 201
-        assert User.objects.filter(username=username).exists()
-        assert User.objects.get(username=username).check_password(password)
+        assert response.status_code == HTTP_201_CREATED
+        assert User.objects.filter(username=self.username).exists()
+        assert User.objects.get(username=self.username).check_password(self.password)
 
 
 class AuthenticationAPI_TestCase(TestCase):
