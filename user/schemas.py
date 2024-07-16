@@ -1,14 +1,14 @@
-from typing import Optional
-from pydantic import NonNegativeInt
-from ninja import Schema
+from ninja import ModelSchema
+
+from .models import User
 
 
-class UserInputSchema(Schema):
-    username: str
-    password: str
-    auto_post_reply: Optional[NonNegativeInt]
+class UserInputSchema(ModelSchema):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
-class UserOutputSchema(Schema):
-    id: int
-    username: str
-    auto_post_reply: Optional[int]
+class UserOutputSchema(ModelSchema):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'auto_post_reply']

@@ -1,35 +1,40 @@
 from typing import Optional
 
-from datetime import datetime, date
-from ninja import Schema, Field
+from datetime import date
+from ninja import Schema, ModelSchema, Field
 
 from user.schemas import UserOutputSchema
+from .models import Post, Comment
 
 
-class PostInputSchema(Schema):
-    title: str
-    content: str
+class PostInputSchema(ModelSchema):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
 
-class PostOutputSchema(Schema):
-    id: int
-    title: str
-    content: str
+class PostOutputSchema(ModelSchema):
     user: UserOutputSchema
-    created_at: datetime
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'created_at']
 
 class PostUpdateSchema(Schema):
     title: Optional[str]
     content: Optional[str]
 
-class CommentInputSchema(Schema):
-    content: str
+class CommentInputSchema(ModelSchema):
+    class Meta:
+        model = Comment
+        fields = ['content']
 
-class CommentOutputSchema(Schema):
-    id: int
-    content: str
-    post_id: int = Field(None, alias='id')
+class CommentOutputSchema(ModelSchema):
+    post_id: int = Field(..., alias='post.id')
     user: UserOutputSchema
-    created_at: datetime
+    
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'created_at']
 
 class CommentDailyBrekadownSchema(Schema):
     day: date
