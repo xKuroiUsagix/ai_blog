@@ -6,12 +6,12 @@ from ai_blog.gemini import ai_model
 from .constants import MAX_AI_RESPONSE_LENGTH
 
 
-def get_ai_response(content):
+def get_ai_response(content: str) -> str:
     return ai_model.generate_content(
         f'Reply to this comment using less than {MAX_AI_RESPONSE_LENGTH} symbols: {content}'
     ).text
 
-def ai_verify_safety(content):
+def ai_verify_safety(content: str) -> bool:
     response = ai_model.generate_content(
         f'Is this text save to public: {content}',
         safety_settings= {
