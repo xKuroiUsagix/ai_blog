@@ -132,8 +132,8 @@ NINJA_JWT = {
 
 # Celery
 
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_BACKEND')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_BACKEND', 'redis://redis:6379/0')
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
