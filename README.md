@@ -43,6 +43,8 @@ _Create a simple API for managing posts and comments with AI moderation and auto
     - In project's root run command: `docker compose build` to build a docker image
     - After build successfully completed run command: `docker compose up`
 
+Now you should be able to access server on http://localhost:8010
+
 ## Known Issues
 ### Gemini
 Gemini has a free plan, but it is not accesible in many countries, particularly in Europe. You can check your country here: https://ai.google.dev/gemini-api/docs/available-regions#unpaid-tier-unavailable.
