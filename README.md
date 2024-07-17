@@ -16,7 +16,7 @@ _Create a simple API for managing posts and comments with AI moderation and auto
 6. Analytics on the number of comments added to posts over a certain period. Example URL: /api/comments-daily-breakdown?date_from=2020-02-02&date_to=2022-02-15. The API should return daily aggregated analytics for each day, showing the number of created comments and the number of blocked comments.
 7. Automatic response function for comments if the user has enabled it for their posts. The automatic response should not happen immediately but after a period set by the user. The response should also be relevant to the post and the comment being responded to.
 
-## Project Setup
+## Local Project Setup
 1. Install Python from https://www.python.org/
 2. Install Redis: https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/
 3. In `/ai-blog/` root directory create python environemnt with command: `python -m venv env`
@@ -29,10 +29,24 @@ _Create a simple API for managing posts and comments with AI moderation and auto
 11. In second terminal type: `celery -A ai_blog worker -Q default -n dynamic_pt_node -l info -E`. This will start celery worker on redis.
 12. In third terminal type: `celery -A ai_blog beat -l info`. This will start celery scheduler.
 
+## Docker
+1. Windows:
+    - Install Docker Desktop: https://www.docker.com/products/docker-desktop/
+    - Open downloaded program
+    - Verify docker installation with command: `docker-compose -v`
+    - In project's root run command: `docker-compose build` to build a docker image
+    - After build successfully completed run command: `docker-compose up`
+
+2. Linux:
+    - Install Docker: https://docs.docker.com/engine/install/ubuntu/#installation-methods
+    - Install docker compose plugin: `sudo apt-get install docker-compose-plugin`
+    - In project's root run command: `docker compose build` to build a docker image
+    - After build successfully completed run command: `docker compose up`
+
 ## Known Issues
 ### Gemini
 Gemini has a free plan, but it is not accesible in many countries, particularly in Europe. You can check your country here: https://ai.google.dev/gemini-api/docs/available-regions#unpaid-tier-unavailable.
 If you don't have access to free plan, you can use VPN to change your location to one of supported countries - recieve a key and then you need to test the project with VPN turned on.
 
 ### Redis on Windows
-Redis could be a bit annoying to use on Windows that's why Linux is prefered. You will need WSL (windows subsystem linux). When using WSL don't forget that you need to type `celery` commands inside of project root folder.
+Redis could be a bit annoying to use on Windows localy that's why Docker is recommended or you can always use Linux. To run project localy you will need WSL (windows subsystem linux). When using WSL don't forget that you need to type `celery` commands inside of project root folder.
