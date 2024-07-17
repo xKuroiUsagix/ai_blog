@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+redis_ready() {
+python << END
+import sys
+from redis import Redis
+
+try:
+    Redis(host='127.0.0.1')
+except ConnectionRefusedError:
+    sys.exit(-1)
+sys.exit(0)
+
+END
+}
+until redis_ready; do
+  >&2 echo 'Waiting for Redis to become avaliable...'
+  sleep 1
+done
+>&2 echo 'Redis is avaliable'
+
+exec "$@"

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+celery -A ai_blog worker -Q default -n dynamic_pt_node -l info -E
