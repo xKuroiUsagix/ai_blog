@@ -44,6 +44,8 @@ _Create a simple API for managing posts and comments with AI moderation and auto
     - After build successfully completed run command: `docker compose up`
 
 Now you should be able to access server on http://localhost:8010
+## Testing
+To run tests type: `pytest --disable-warnings`
 
 ## Known Issues
 ### Gemini

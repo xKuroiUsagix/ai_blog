@@ -1,4 +1,5 @@
 MAX_COMMENT_LENGTH = 512
+MAX_AI_RESPONSE_LENGTH = 256
 
 HARMFUL_CONTENT_ERROR = 'Provided content was considered as harmful and was blocked.'
 BLOCKED_COMMENT_ERROR = 'The comment you are trying to recieve was blocked due to safery reasons.'

@@ -49,7 +49,7 @@ class BlogController:
 
     @route.post('/create-post', response={HTTP_201_CREATED: PostOutputSchema})
     def create_post(self, request, data: PostInputSchema):
-        if not ai_verify_safety(data.content):
+        if not ai_verify_safety(data.content) or not ai_verify_safety(data.title):
             raise HttpError(HTTP_400_BAD_REQUEST, HARMFUL_CONTENT_ERROR)
 
         return Post.objects.create(
