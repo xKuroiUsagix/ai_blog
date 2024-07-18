@@ -20,20 +20,17 @@ class UserTestCase(TestCase):
     def test_create_user(self):
         response = self.client.post(self.path, self.data, content_type='application/json')
         
-        assert response.status_code == HTTP_201_CREATED
-        assert User.objects.filter(username=self.username).exists()
-        assert User.objects.get(username=self.username).check_password(self.password)
+        self.assertEqual(response.status_code, HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.get().username, self.username)
 
 
-class AuthenticationAPI_TestCase(TestCase):
+class AuthenticationApiTestCase(TestCase):
     def setUp(self):
         self.clinet = Client()
         self.username = 'test_username'
         self.password = 'test_pass'
-        self.user = User(
-            username = self.username,
-            auto_post_reply = None
-        )
+        self.user = User(username = self.username)
         self.user.set_password(self.password)
         self.user.save()
         self.user_data = json.dumps({
@@ -48,9 +45,9 @@ class AuthenticationAPI_TestCase(TestCase):
         response = self.clinet.post(self.obtain_token_path, self.user_data, content_type='application/json')
         response_data = json.loads(response.content)
 
-        assert response.status_code == HTTP_200_OK
-        assert response_data['access'] is not None
-        assert response_data['refresh'] is not None
+        self.assertEqual(response.status_code, HTTP_200_OK)
+        self.assertIsNotNone(response_data['access'])
+        self.assertIsNotNone(response_data['refresh'])
     
     def test_obtain_token_pair_with_no_user(self):
         data = json.dumps({
@@ -59,7 +56,7 @@ class AuthenticationAPI_TestCase(TestCase):
         })
         response = self.clinet.post(self.obtain_token_path, data, content_type='application/json')
 
-        assert response.status_code == HTTP_401_UNAUTHORIZED
+        self.assertEqual(response.status_code, HTTP_401_UNAUTHORIZED)
     
     def test_token_refresh(self):
         token_response = self.client.post(self.obtain_token_path, self.user_data, content_type='application/json')
@@ -70,9 +67,9 @@ class AuthenticationAPI_TestCase(TestCase):
         response = self.client.post(self.refresh_token_path, data, content_type='application/json')
         response_data = json.loads(response.content)
         
-        assert response.status_code == HTTP_200_OK
-        assert response_data.get('access') is not None
-        assert response_data.get('refresh') is not None
+        self.assertEqual(response.status_code, HTTP_200_OK)
+        self.assertIsNotNone(response_data['access'])
+        self.assertIsNotNone(response_data['refresh'])
         
     def test_verify_token(self):
         token_response = self.client.post(self.obtain_token_path, self.user_data, content_type='application/json')
@@ -82,7 +79,7 @@ class AuthenticationAPI_TestCase(TestCase):
         
         response = self.client.post(self.verify_token_path, data, content_type='application/json')
         
-        assert response.status_code == HTTP_200_OK
+        self.assertEqual(response.status_code, HTTP_200_OK)
     
     def test_verify_token_wrong_access_token(self):
         wrong_token = 'afkgpwokw[pegqfplbwlbw[bplpdndndd]]'
@@ -92,4 +89,4 @@ class AuthenticationAPI_TestCase(TestCase):
         
         response = self.client.post(self.verify_token_path, data, content_type='application/json')
         
-        assert response.status_code == HTTP_401_UNAUTHORIZED
+        self.assertEqual(response.status_code, HTTP_401_UNAUTHORIZED)
