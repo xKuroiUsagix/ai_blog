@@ -53,8 +53,8 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if (not self.user.auto_post_reply or self.task or self.is_response or 
-                self.generated_by_ai or self.is_blocked):
+        if (not self.user.auto_post_reply or self.task or self.is_response 
+                or self.generated_by_ai or self.is_blocked):
             return
 
         self.respond_at = self.created_at + timedelta(minutes=self.user.auto_post_reply)

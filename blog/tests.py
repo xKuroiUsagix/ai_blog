@@ -35,12 +35,9 @@ class AiFunctionsTestCase(TestCase):
             assert is_safe == True
 
     def test_ai_verify_unsafe_message(self):
-        # This test doesn't work sometimes because of the way how Gemini analyses safety, 
-        # but should work most of the time
         safety_verification = [ai_verify_safety(msg) for msg in self.unsafe_messages]
 
         for is_safe in safety_verification:
-            print(is_safe)
             assert is_safe == False
     
     def test_get_ai_response(self):
@@ -50,7 +47,7 @@ class AiFunctionsTestCase(TestCase):
         assert len(response) <= MAX_AI_RESPONSE_LENGTH
 
 
-class PostsApiNoAuthTestCase(TestCase):
+class PostsAPINoAuthTestCase(TestCase):
     def setUp(self):
         self.post_data = {
             'title': 'Test post title',
@@ -64,8 +61,9 @@ class PostsApiNoAuthTestCase(TestCase):
         assert response.status_code == HTTP_401_UNAUTHORIZED
 
 
-class PostApiTestCase(TestCase):
+class PostAPITestCase(TestCase):
     def setUp(self):
+        self.path = '/api/blog/create-post'
         self.user = User(username = 'test_username')
         self.user.set_password('test_pass')
         self.user.save()
@@ -75,28 +73,28 @@ class PostApiTestCase(TestCase):
         }
         self.unsafe_post_data = {
             'title': 'Test title',
-            'content': 'I think certain people should be killed'
+            'content': 'You can kill yourself.'
         }
-        
+
         self.api_client = APIClient()
         self.access_token = str(RefreshToken.for_user(self.user).access_token)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
 
     def test_create_safe_post(self):
-        response = self.api_client.post('/api/blog/create-post', self.safe_post_data, format='json')
+        response = self.api_client.post(self.path, self.safe_post_data, format='json')
         
         self.assertEqual(response.status_code, HTTP_201_CREATED)
         self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(Post.objects.get().title, self.safe_post_data['title'])
     
     def test_create_unsafe_post(self):
-        response = self.api_client.post('/api/blog/create-post', self.unsafe_post_data, format='json')
+        response = self.api_client.post(self.path, self.unsafe_post_data, format='json')
 
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST)
         self.assertEqual(Post.objects.count(), 0)
 
 
-class CommentApiTestCase(TestCase):
+class CommentAPITestCase(TestCase):
     def setUp(self):
         self.user = User(
             username = 'test_username',
@@ -115,12 +113,13 @@ class CommentApiTestCase(TestCase):
         self.unsafe_comment_data = {
             'content': 'You should be dead already'
         }
+        self.path = f'/api/blog/post/{self.post.id}/create-comment'
         self.api_client = APIClient()
         self.access_token = str(RefreshToken.for_user(self.user).access_token)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
     
     def test_create_safe_comment(self):
-        response = self.api_client.post(f'/api/blog/post/{self.post.id}/create-comment', self.safe_comment_data, format='json')
+        response = self.api_client.post(self.path, self.safe_comment_data, format='json')
         
         self.assertEqual(response.status_code, HTTP_201_CREATED)
         self.assertEqual(Comment.objects.count(), 1)
@@ -128,13 +127,13 @@ class CommentApiTestCase(TestCase):
         self.assertEqual(self.post.comment.count(), 1)
     
     def test_create_unsafe_comment(self):
-        response = self.api_client.post(f'/api/blog/post/{self.post.id}/create-comment', self.unsafe_comment_data, format='json')
+        response = self.api_client.post(self.path, self.unsafe_comment_data, format='json')
 
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST)
         self.assertEqual(Comment.objects.filter(is_blocked=True).count(), 1)
 
 
-class AnalyticsApiTestCase(TestCase):
+class AnalyticsAPITestCase(TestCase):
     def setUp(self):
         self.user = User(
             username = 'test_username',
@@ -208,7 +207,7 @@ class AnalyticsApiTestCase(TestCase):
         self.assertEqual(response.status_code, HTTP_200_OK)
         
         for record, day, comments, blocked_comments in \
-            zip(daily_analytics, self.days_dates, self.days_amount, self.days_blocked_amount):
+                zip(daily_analytics, self.days_dates, self.days_amount, self.days_blocked_amount):
             self.assertEqual(record['day'], str(day))
             self.assertEqual(record['total_comments'], comments)
             self.assertEqual(record['blocked_comments'], blocked_comments)
@@ -220,7 +219,7 @@ class AnalyticsApiTestCase(TestCase):
         self.assertEqual(response.status_code, HTTP_200_OK)
         
         for record, day, comments, blocked_comments in \
-            zip(daily_analytics, self.days_dates, self.days_amount, self.days_blocked_amount):
+                zip(daily_analytics, self.days_dates, self.days_amount, self.days_blocked_amount):
             self.assertEqual(record['day'], str(day))
             self.assertEqual(record['total_comments'], comments - self.generated_by_ai)
             self.assertEqual(record['blocked_comments'], blocked_comments)
@@ -231,8 +230,7 @@ class AnalyticsApiTestCase(TestCase):
 
         self.assertEqual(response.status_code, HTTP_200_OK)
         
-        for record, day, comments, blocked_comments in \
-            zip(daily_analytics, self.days_dates, self.days_amount, self.days_blocked_amount):
+        for record, day in zip(daily_analytics, self.days_dates):
             self.assertEqual(record['day'], str(day))
             self.assertEqual(record['total_comments'], self.generated_by_ai)
             self.assertEqual(record['blocked_comments'], 0)
