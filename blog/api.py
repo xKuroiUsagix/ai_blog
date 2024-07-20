@@ -171,7 +171,7 @@ class BlogAnalyticsController:
 
         daily_breakdown = []
         for entry in aggregated_comments:
-            daily_breakdown .append({
+            daily_breakdown.append({
                 'day': entry['day'],
                 'total_comments': entry['total_comments'],
                 'blocked_comments': entry['blocked_count'],

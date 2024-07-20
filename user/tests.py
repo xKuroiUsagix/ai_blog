@@ -25,7 +25,7 @@ class UserTestCase(TestCase):
         self.assertEqual(User.objects.get().username, self.username)
 
 
-class AuthenticationApiTestCase(TestCase):
+class AuthenticationAPITestCase(TestCase):
     def setUp(self):
         self.clinet = Client()
         self.username = 'test_username'
