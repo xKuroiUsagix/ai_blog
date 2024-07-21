@@ -17,10 +17,10 @@ _Create a simple API for managing posts and comments with AI moderation and auto
 7. Automatic response function for comments if the user has enabled it for their posts. The automatic response should not happen immediately but after a period set by the user. The response should also be relevant to the post and the comment being responded to.
 
 ## Local Project Setup
-1. Install Python from https://www.python.org/
-2. Install Redis: https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/
+1. Install [Python 3.12](https://www.python.org/downloads/)
+2. Install [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
 3. In `/ai-blog/` root directory create python environemnt with command: `python -m venv env`
-4. Activate created environment. (https://docs.python.org/3/library/venv.html)
+4. [Activate](https://docs.python.org/3/library/venv.html) created environment.
 5. Install requirements with command: `pip install -r requirements.txt`
 6. Create `.env` file in root directory and create there 2 variables: `SECRET_KEY = u#d-6mzeich*l$18qv46eeik49u__w)9-k(r=3-4ik^2=61&al`, `GEMINI_API_KEY = your gemini api key`. Provided SECRET_KEY use only for testing purpose.
 8. Migrate django models to database with command: `python manage.py migrate`
@@ -31,14 +31,14 @@ _Create a simple API for managing posts and comments with AI moderation and auto
 
 ## Docker
 1. Windows:
-    - Install Docker Desktop: https://www.docker.com/products/docker-desktop/
+    - Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) 
     - Open downloaded program
     - Verify docker installation with command: `docker-compose -v`
     - In project's root run command: `docker-compose build` to build a docker image
     - After build successfully completed run command: `docker-compose up`
 
 2. Linux:
-    - Install Docker: https://docs.docker.com/engine/install/ubuntu/#installation-methods
+    - Install [Docker](https://docs.docker.com/engine/install/ubuntu/#installation-methods)
     - Install docker compose plugin: `sudo apt-get install docker-compose-plugin`
     - In project's root run command: `docker compose build` to build a docker image
     - After build successfully completed run command: `docker compose up`
@@ -49,7 +49,7 @@ To run tests type: `pytest --disable-warnings`
 
 ## Known Issues
 ### Gemini
-Gemini has a free plan, but it is not accesible in many countries, particularly in Europe. You can check your country here: https://ai.google.dev/gemini-api/docs/available-regions#unpaid-tier-unavailable.
+Gemini has a free plan, but it is not accesible in many countries, particularly in Europe. You can check your country here: [*click*](https://ai.google.dev/gemini-api/docs/available-regions#unpaid-tier-unavailable.)
 If you don't have access to free plan, you can use VPN to change your location to one of supported countries - recieve a key and then you need to test the project with VPN turned on.
 
 ### Redis on Windows
