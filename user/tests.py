@@ -30,7 +30,7 @@ class AuthenticationAPITestCase(TestCase):
         self.clinet = Client()
         self.username = 'test_username'
         self.password = 'test_pass'
-        self.user = User(username = self.username)
+        self.user = User(username=self.username)
         self.user.set_password(self.password)
         self.user.save()
         self.user_data = json.dumps({
